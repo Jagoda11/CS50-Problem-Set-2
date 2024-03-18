@@ -4,65 +4,61 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-
+// Function declaration for Vigenère encryption 🛡️
 void vig_encrypt(string text, string k);
 
 int main(int argc, string argv[])
 {
+    // Ensure the correct usage with one command-line argument 📝
     if (argc != 2)
     {
-        printf("ERROR: wrong number ");
+        printf("Usage: ./vigenere key\n");
         return 1;
     }
 
     string k = argv[1];
 
-    // check if all char are letters
-    for (int i = 0; i < strlen(k); i++)
+    // Check if all characters in the key are letters 🔍
+    for (int i = 0, len = strlen(k); i < len; i++)
     {
-        if (isalpha(k[i]) == 0)
+        if (!isalpha(k[i]))
         {
-            printf("use only letters\n");
+            printf("Key must be alphabetic characters only\n");
             return 1;
         }
     }
 
+    // Prompt user for plaintext 📃
     string text = get_string("plaintext: ");
     printf("ciphertext: ");
+
+    // Encrypt and print the ciphertext 🔒
     vig_encrypt(text, k);
     printf("\n");
 
     return 0;
 }
 
+// Function to encrypt text using Vigenère cipher 🔐
 void vig_encrypt(string text, string k)
 {
-    for (int i = 0, j = 0; i < strlen(text); i++)
+    int key_len = strlen(k);
+    
+    for (int i = 0, j = 0, n = strlen(text); i < n; i++)
     {
-        j = j % strlen(k);
-
         if (isalpha(text[i]))
         {
-            if (islower(text[i]) && islower(k[j]))
-            {
-                printf("%c", (((text[i] - 97) + (k[j] - 97)) % 26) + 97);
-            }
-            else if (isupper(text[i]) && islower(k[j]))
-            {
-                printf("%c", (((text[i] - 65) + (k[j] - 97)) % 26) + 65);
-            }
-            else if (islower(text[i]) && isupper(k[j]))
-            {
-                printf("%c", (((text[i] - 97) + (k[j] - 65)) % 26) + 97);
-            }
-            else if (isupper(text[i]) && isupper(k[j]))
-            {
-                printf("%c", (((text[i] - 65) + (k[j] - 65)) % 26) + 65);
-            }
+            char base = islower(text[i]) ? 'a' : 'A';
+            int letterIndex = islower(text[i]) ? text[i] - 'a' : text[i] - 'A';
+            int keyIndex = islower(k[j % key_len]) ? k[j % key_len] - 'a' : k[j % key_len] - 'A';
+
+            // Encrypt and print the character 🖨️
+            printf("%c", (letterIndex + keyIndex) % 26 + base);
             j++;
         }
         else
         {
+            // Print the non-alphabetic character as it is 📤
             printf("%c", text[i]);
         }
     }
